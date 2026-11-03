@@ -205,9 +205,10 @@ $('piste').onchange = () => api.renderTracks([api.score.tracks[+$('piste').value
 const sansAccents = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 function ouvrirListe() {
   $('liste').hidden = false;
+  document.querySelector('.barre').hidden = true;     // pas de lecteur sur la liste
   document.title = 'Guitare Pat · répertoire';
   fetch('repertoire/index.json?' + Date.now()).then(r => r.ok ? r.json() : []).catch(() => []).then(liste => {
-    liste.sort((a, b) => ((a.artiste || '') + a.titre).localeCompare((b.artiste || '') + b.titre, 'fr'));
+    liste.sort((a, b) => a.titre.localeCompare(b.titre, 'fr'));
     const montrer = q => {
       const n = sansAccents(q);
       const vis = liste.filter(p => sansAccents(p.titre + ' ' + (p.artiste || '')).includes(n));
