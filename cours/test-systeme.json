@@ -1,0 +1,33 @@
+{
+ "titre": "Test système",
+ "eleve": "Test",
+ "date": "3 nov. 2026",
+ "consigne": "Fichier de test du système (pas un vrai cours).",
+ "tex": "\\title \"Travis picking\"\n\\subtitle \"Test\"\n\\tempo 70\n.\n\\track \"Guitare acoustique\"\n\\staff {score tabs}\n\\tuning e4 b3 g3 d3 a2 e2\n\\instrument 25\n\\ts 4 4 0.4.4 2.3.4 0.4.4 2.3.4 |\n0.4.4 2.3.4 0.4.4 2.3.4 |\n0.4.8 3.2.8 2.3.8 3.2.8 0.4.8 3.2.8 2.3.8 3.2.8 |\n0.4.8 3.2.8 2.3.8 3.2.8 0.4.8 3.2.8 2.3.8 3.2.8 |\n(2.1 0.4).8 3.2.8 2.3.8 2.1.8 0.4.8 3.2.8 2.3.8 2.1.8 |\n(2.1 0.4).8 3.2.8 2.3.8 2.1.8 0.4.8 3.2.8 2.3.8 2.1.8 |\n(2.1 0.4).8 3.2.8 2.3.8 2.1.8 0.4.8 3.2.8 2.3.8 2.1.8 |\n(0.1 0.5).8 2.2.8 2.4.8 0.1.8 0.5.8 2.2.8 2.4.8 0.1.8",
+ "parties": [
+  {
+   "nom": "1 · Le pouce seul",
+   "de": 1,
+   "a": 2,
+   "aide": "Basse (corde 4) et basse alternée (corde 3) sur ré. Tu dois pouvoir parler par-dessus."
+  },
+  {
+   "nom": "2 · Pouce + index",
+   "de": 3,
+   "a": 4,
+   "aide": "L'index répond sur la corde de si, entre chaque coup de pouce."
+  },
+  {
+   "nom": "3 · Le patron complet",
+   "de": 5,
+   "a": 6,
+   "aide": "Le majeur s'ajoute sur le mi aigu ; sur le temps 1, il pince avec le pouce."
+  },
+  {
+   "nom": "4 · Ré → La7",
+   "de": 7,
+   "a": 8,
+   "aide": "Le pouce ne s'arrête pas : la main gauche arrive à temps."
+  }
+ ]
+}
