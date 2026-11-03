@@ -1,0 +1,24 @@
+\title "When the Saints Go Marching In"
+\artist "Traditionnel"
+\tempo 120
+.
+\track "Guitare"
+\staff {score tabs}
+\tuning e4 b3 g3 d3 a2 e2
+\instrument 25
+\ts 4 4 r.4 {ch "C"} 1.2.4 0.1.4 1.1.4 |
+3.1.1 {ch "C"} |
+r.4 {ch "C"} 1.2.4 0.1.4 1.1.4 |
+3.1.1 {ch "C"} |
+r.4 {ch "C"} 1.2.4 0.1.4 1.1.4 |
+3.1.2 {ch "C"} 0.1.2 |
+1.2.2 {ch "C"} 0.1.2 |
+3.2.1 {ch "G7"} |
+r.4 {ch "C"} 0.1.4 0.1.4 3.2.4 |
+1.2.2 {d ch "C"} 0.1.4 |
+3.1.2 {ch "F"} 3.1.4 1.1.4 |
+1.1.1 {ch "F"} |
+0.1.4 {ch "C"} 1.1.4 3.1.2 |
+0.1.2 {ch "C"} 1.2.2 |
+3.2.1 {ch "G7"} |
+1.2.1 {ch "C"}

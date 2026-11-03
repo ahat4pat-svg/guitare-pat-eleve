@@ -172,7 +172,10 @@ function ouvrirPiece() {
     $('sous').textContent = pieceInfo.artiste || '';
     document.title = pieceInfo.titre;
     video(pieceInfo.youtube);
-    api.load('repertoire/' + encodeURIComponent(fichierPiece));
+    const url = 'repertoire/' + encodeURIComponent(fichierPiece);
+    // .alphatex = pièce écrite par Claude (texte) ; le reste (Guitar Pro, MusicXML) s'ouvre tel quel
+    if (/\.alphatex$/i.test(fichierPiece)) fetch(url).then(r => r.text()).then(t => api.tex(t));
+    else api.load(url);
   });
 }
 // Les parties : les sections du fichier (Intro, Couplet…) s'il y en a, sinon des blocs de 8 mesures
