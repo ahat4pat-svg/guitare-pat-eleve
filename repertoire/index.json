@@ -64,5 +64,41 @@
   "artiste": "Traditionnel",
   "fichier": "when-the-saints.alphatex",
   "droits": "domaine public"
+ },
+ {
+  "titre": "Amazing Grace",
+  "artiste": "Traditionnel",
+  "fichier": "amazing-grace.cho",
+  "droits": "domaine public"
+ },
+ {
+  "titre": "Au clair de la lune",
+  "artiste": "Traditionnel",
+  "fichier": "au-clair-de-la-lune.cho",
+  "droits": "domaine public"
+ },
+ {
+  "titre": "Frère Jacques",
+  "artiste": "Traditionnel",
+  "fichier": "frere-jacques.cho",
+  "droits": "domaine public"
+ },
+ {
+  "titre": "House of the Rising Sun (arpège)",
+  "artiste": "Traditionnel",
+  "fichier": "house-of-the-rising-sun.cho",
+  "droits": "domaine public"
+ },
+ {
+  "titre": "Vive le vent (Jingle Bells)",
+  "artiste": "James Lord Pierpont",
+  "fichier": "vive-le-vent-jingle-bells.cho",
+  "droits": "domaine public"
+ },
+ {
+  "titre": "When the Saints Go Marching In",
+  "artiste": "Traditionnel",
+  "fichier": "when-the-saints.cho",
+  "droits": "domaine public"
  }
 ]

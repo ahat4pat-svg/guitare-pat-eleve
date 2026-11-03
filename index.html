@@ -10,6 +10,7 @@
   /* Version élève : lire et pratiquer seulement (décision de Pat, 3 nov. 2026). Rien ne se modifie. */
   :root { --bg:#14110e; --card:#1e1914; --ink:#f1e7d8; --mute:#a8977f; --line:#352c23; --accent:#e3a05c; --paper:#faf6ef; }
   * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
   body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 Inter, Arial, sans-serif;
          padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
   main { max-width:980px; margin:0 auto; padding-block:20px 140px; }
@@ -30,6 +31,18 @@
   #pieces b { font-weight:600; min-width:0; } #pieces span { color:var(--mute); font-size:14px; text-align:right; }
   .piste { margin:0 0 12px 12px; display:inline-flex; }
   .piste select { background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:7px 8px; font:14px Inter, Arial; max-width:60vw; }
+  .autre { display:inline-block; margin:0 0 14px; color:var(--accent); font-weight:600; text-decoration:none; border:1px solid var(--accent); border-radius:999px; padding:7px 14px; }
+  .outils { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px; color:var(--mute); font-size:14px; }
+  .outils button { background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:8px; min-width:40px; padding:7px 10px; font:700 15px Inter, Arial; cursor:pointer; }
+  .outils b { min-width:2.2em; text-align:center; color:var(--ink); } .outils .sep { width:10px; } .mut { color:var(--mute); }
+  #paroles { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 18px 24px; font:18px/1.35 Inter, Arial, sans-serif; overflow-wrap:anywhere; }
+  #paroles .ligne { margin:0 0 6px; display:flex; flex-wrap:wrap; align-items:flex-end; }
+  #paroles .m { display:inline-flex; flex-direction:column; white-space:pre-wrap; }
+  #paroles .m i { font-style:normal; font-weight:700; color:var(--accent); min-height:1.3em; padding-right:6px; }
+  #paroles .refrain { border-left:3px solid var(--accent); padding-left:12px; margin:4px 0; }
+  #paroles .etiq { margin:14px 0 6px; font:600 12px/1 Inter, Arial; letter-spacing:2px; text-transform:uppercase; color:var(--mute); }
+  #paroles .vide { height:12px; }
+  #pieces .tag { font:600 11px Inter, Arial; letter-spacing:1px; text-transform:uppercase; color:var(--bg); background:var(--mute); border-radius:4px; padding:2px 6px; margin-left:8px; vertical-align:middle; }
   .aide { color:var(--mute); min-height:1.5em; margin:4px 0 14px; }
   #video { position:relative; aspect-ratio:16/9; max-width:100%; border-radius:12px; overflow:hidden; margin-bottom:14px; background:#000; }
   #video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
@@ -66,7 +79,14 @@
   <label class="piste" id="pisteBox" hidden>Piste <select id="piste"></select></label>
   <div class="parties" id="parties"></div>
   <p class="aide" id="aide"></p>
+  <a id="autre" class="autre" hidden></a>
+  <div id="outilsParoles" class="outils" hidden>
+    <span>Transposer</span><button id="tonMoins" aria-label="Descendre d'un demi-ton">−</button><b id="ton">0</b><button id="tonPlus" aria-label="Monter d'un demi-ton">+</button>
+    <span class="sep"></span><button id="plusPetit" aria-label="Texte plus petit">A−</button><button id="plusGros" aria-label="Texte plus gros">A+</button>
+    <span id="infoParoles" class="mut"></span>
+  </div>
   <div id="video" hidden></div>
+  <div id="paroles" hidden></div>
   <div id="feuille"></div>
   <p class="consigne" id="consigne"></p>
   </section>
@@ -173,6 +193,10 @@ function ouvrirPiece() {
     document.title = pieceInfo.titre;
     video(pieceInfo.youtube);
     const url = 'repertoire/' + encodeURIComponent(fichierPiece);
+    const estParoles = EXT_PAROLES.test(fichierPiece);
+    const autre = liste.find(p => p.fichier !== fichierPiece && sansAccents(p.titre) === sansAccents(pieceInfo.titre) && EXT_PAROLES.test(p.fichier) !== estParoles);
+    if (autre) { $('autre').href = '?piece=' + encodeURIComponent(autre.fichier); $('autre').textContent = estParoles ? 'Voir la tab ›' : 'Voir paroles et accords ›'; $('autre').hidden = false; }
+    if (estParoles) return ouvrirParoles(url);
     // .alphatex = pièce écrite par Claude (texte) ; le reste (Guitar Pro, MusicXML) s'ouvre tel quel
     if (/\.alphatex$/i.test(fichierPiece)) fetch(url).then(r => r.text()).then(t => api.tex(t));
     else api.load(url);
@@ -212,13 +236,82 @@ function ouvrirListe() {
     const montrer = q => {
       const n = sansAccents(q);
       const vis = liste.filter(p => sansAccents(p.titre + ' ' + (p.artiste || '')).includes(n));
-      $('pieces').innerHTML = vis.map(p => `<li><a href="?piece=${encodeURIComponent(p.fichier)}"><b>${p.titre}</b><span>${p.artiste || ''}</span></a></li>`).join('')
+      $('pieces').innerHTML = vis.map(p => `<li><a href="?piece=${encodeURIComponent(p.fichier)}"><b>${p.titre}<span class="tag">${EXT_PAROLES.test(p.fichier) ? 'paroles' : 'tab'}</span></b><span>${p.artiste || ''}</span></a></li>`).join('')
         || '<li class="aide">Aucune chanson pour l’instant.</li>';
     };
     $('cherche').oninput = () => montrer($('cherche').value);
     montrer('');
   });
 }
+
+
+// ---------- Paroles et accords (ChordPro / OnSong) ----------
+// Un fichier .cho/.chordpro/.pro/.onsong : les accords entre crochets dans le texte, [G]comme [C]ça.
+// On les affiche au-dessus des mots ; transposer et grossir le texte, rien d'autre ne se modifie.
+const EXT_PAROLES = /\.(cho|chordpro|chopro|crd|pro|onsong)$/i;
+const NOTES_D = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+const NOTE_I = { C: 0, 'B#': 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, Fb: 4, F: 5, 'E#': 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11, Cb: 11 };
+let texteParoles = '', demiTons = 0, taille = 1;
+
+function transposer(accord, n) {
+  if (!n) return accord;
+  return accord.replace(/([A-G][#b]?)/g, (m, r) => r in NOTE_I ? NOTES_D[(NOTE_I[r] + n + 120) % 12] : m);
+}
+const echap = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+function rendreParoles() {
+  const out = [];
+  let section = null;
+  const fermer = () => { if (section) { out.push('</div>'); section = null; } };
+  for (const brut of texteParoles.replace(/\r/g, '').split('\n')) {
+    const l = brut.trimEnd();
+    const d = l.match(/^\{\s*([\w_-]+)\s*(?::\s*(.*?))?\s*\}$/);
+    if (d) {
+      const [, cle, val = ''] = d, k = cle.toLowerCase();
+      if (/^(t|title|st|subtitle|artist|key|tempo|time|capo)$/.test(k)) continue;   // déjà dans l'en-tête
+      if (/^(soc|start_of_chorus)$/.test(k)) { fermer(); out.push(`<div class="refrain">${val ? `<p class="etiq">${echap(val)}</p>` : ''}`); section = 'c'; continue; }
+      if (/^(sov|start_of_verse|sob|start_of_bridge|start_of_part)$/.test(k)) { fermer(); out.push(`<div class="couplet">${val ? `<p class="etiq">${echap(val)}</p>` : ''}`); section = 'v'; continue; }
+      if (/^(eoc|end_of_chorus|eov|end_of_verse|eob|end_of_bridge|end_of_part)$/.test(k)) { fermer(); continue; }
+      if (/^(c|comment|ci|comment_italic|cb|highlight)$/.test(k)) { out.push(`<p class="etiq">${echap(val)}</p>`); continue; }
+      continue;
+    }
+    if (/^#/.test(l)) continue;                                   // commentaire de fichier
+    const onsong = l.match(/^(Verse|Chorus|Bridge|Intro|Outro|Pre-?Chorus|Refrain|Couplet|Pont|Solo|Tag|Interlude)\s*\d*\s*:\s*$/i);
+    if (onsong) { fermer(); out.push(`<p class="etiq">${echap(l.replace(/:\s*$/, ''))}</p>`); continue; }
+    if (!l.trim()) { out.push('<div class="vide"></div>'); continue; }
+    if (!l.includes('[')) { out.push(`<p class="ligne"><span class="m"><i></i>${echap(l)}</span></p>`); continue; }
+    // [Accord]mots -> colonnes : l'accord au-dessus du début de ses mots
+    const morceaux = [], re = /\[([^\]]*)\]/g;
+    let pos = 0, acc = '', m;
+    while ((m = re.exec(l))) { morceaux.push([acc, l.slice(pos, m.index)]); acc = m[1]; pos = re.lastIndex; }
+    morceaux.push([acc, l.slice(pos)]);
+    out.push('<p class="ligne">' + morceaux.filter(([a, t]) => a || t).map(([a, t]) =>
+      `<span class="m"><i>${echap(transposer(a, demiTons))}</i>${echap(t) || '&nbsp;'}</span>`).join('') + '</p>');
+  }
+  fermer();
+  $('paroles').innerHTML = out.join('');
+  $('paroles').style.fontSize = (taille * 100) + '%';
+  $('ton').textContent = demiTons ? (demiTons > 0 ? '+' : '') + demiTons : '0';
+}
+
+function ouvrirParoles(url) {
+  ['vue', 'pisteBox', 'parties', 'feuille'].forEach(id => $(id).hidden = true);
+  document.querySelector('.barre').hidden = true;
+  $('outilsParoles').hidden = false; $('paroles').hidden = false;
+  fetch(url).then(r => r.text()).then(t => {
+    texteParoles = t;
+    const meta = k => (t.match(new RegExp('\\{\\s*(?:' + k + ')\\s*:\\s*([^}]*)\\}', 'i')) || [])[1];
+    const titre = meta('t|title'), artiste = meta('st|subtitle|artist'), ton = meta('key'), capo = meta('capo');
+    if (titre) { $('titre').textContent = titre; document.title = titre; }
+    if (artiste) $('sous').textContent = artiste;
+    $('infoParoles').textContent = [ton && 'Tonalité : ' + ton, capo && 'Capo ' + capo].filter(Boolean).join(' · ');
+    rendreParoles();
+  });
+}
+$('tonMoins').onclick = () => { demiTons--; rendreParoles(); };
+$('tonPlus').onclick = () => { demiTons++; rendreParoles(); };
+$('plusPetit').onclick = () => { taille = Math.max(0.7, taille - 0.1); rendreParoles(); };
+$('plusGros').onclick = () => { taille = Math.min(1.8, taille + 0.1); rendreParoles(); };
 
 if (nom) ouvrirCours(); else if (fichierPiece) ouvrirPiece(); else ouvrirListe();
 </script>
