@@ -42,6 +42,8 @@
   #paroles .refrain { border-left:3px solid var(--accent); padding-left:12px; margin:4px 0; }
   #paroles .etiq { margin:14px 0 6px; font:600 12px/1 Inter, Arial; letter-spacing:2px; text-transform:uppercase; color:var(--mute); }
   #paroles .vide { height:12px; }
+  #paroles .seuls { gap:14px; } #paroles .seuls i { font-style:normal; font-weight:700; color:var(--accent); }
+  @media (max-width:600px) { #paroles { font-size:16px; padding:14px 12px 20px; } #paroles .m i { padding-right:4px; } }
   #pieces .tag { font:600 11px Inter, Arial; letter-spacing:1px; text-transform:uppercase; color:var(--bg); background:var(--mute); border-radius:4px; padding:2px 6px; margin-left:8px; vertical-align:middle; }
   .aide { color:var(--mute); min-height:1.5em; margin:4px 0 14px; }
   #video { position:relative; aspect-ratio:16/9; max-width:100%; border-radius:12px; overflow:hidden; margin-bottom:14px; background:#000; }
@@ -280,6 +282,8 @@ function rendreParoles() {
     if (onsong) { fermer(); out.push(`<p class="etiq">${echap(l.replace(/:\s*$/, ''))}</p>`); continue; }
     if (!l.trim()) { out.push('<div class="vide"></div>'); continue; }
     if (!l.includes('[')) { out.push(`<p class="ligne"><span class="m"><i></i>${echap(l)}</span></p>`); continue; }
+    // une ligne d'accords seuls (intro, solo) : juste les accords, en rangée
+    if (!l.replace(/\[[^\]]*\]/g, '').trim()) { out.push('<p class="ligne seuls">' + [...l.matchAll(/\[([^\]]*)\]/g)].map(m => `<i>${echap(transposer(m[1], demiTons))}</i>`).join('') + '</p>'); continue; }
     // [Accord]mots -> colonnes : l'accord au-dessus du début de ses mots
     const morceaux = [], re = /\[([^\]]*)\]/g;
     let pos = 0, acc = '', m;
